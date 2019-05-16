@@ -1,4 +1,4 @@
-//firmare for charles
+//firmware for charles
 //team charles angels
 
 int ENA=5;
@@ -7,10 +7,10 @@ int IN2=2;
 int ENB=6;
 int IN3=3;
 int IN4=4;
-int RO=8;
+int RO=10;
 int RI=9;
-int LI=10;
-int LO=11;
+int LI=11;
+int LO=12;
 
 
 //global variables
@@ -47,15 +47,22 @@ void rev(int vel){
  }
 }
 
-void hardestLeft(){
- digitalWrite(IN1,LOW);
- digitalWrite(IN2,HIGH);
-}
-
-
 void hardestRight(){
+ analogWrite(ENA, 500);
+ digitalWrite(IN1,HIGH);
+ digitalWrite(IN2,LOW);
+ analogWrite(ENB, 500);
  digitalWrite(IN3,LOW);
  digitalWrite(IN4,HIGH);
+}
+
+void hardestLeft(){
+ analogWrite(ENA,500);
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,HIGH);
+ analogWrite(ENB, 500);
+ digitalWrite(IN3,HIGH);
+ digitalWrite(IN4,LOW);
 }
 
 void hardLeft(){
@@ -66,10 +73,10 @@ void hardRight(){
 }
 
 void turnLeft(){
-  fwd(-10);
+  fwd(-200);
 }
 void turnRight(){
-  fwd(10);
+  fwd(200);
 }
 void steady(){
   fwd(0);
@@ -93,14 +100,14 @@ void readVal(){
 
 void processVal(){
     if(val == 8 || val == 12){
-      hardLeft();
+      hardestLeft();
     }
     if(val == 14 ){
       turnLeft();
     }
 
-    if(val == 1 || val == 3){
-      hardRight();
+    if(val == 3 || val == 1){
+      hardestRight();
     }
     if(val == 7 ){
       turnRight();
@@ -132,4 +139,8 @@ void loop()
 {
   readVal();
   processVal();
+  //hardestLeft();
+  //delay(1000);
+  //hardestRight();
+  //delay(1000);
 }
