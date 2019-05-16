@@ -1,0 +1,135 @@
+//firmare for charles
+//team charles angels
+
+int ENA=5;
+int IN1=1;
+int IN2=2;
+int ENB=6;
+int IN3=3;
+int IN4=4;
+int RO=8;
+int RI=9;
+int LI=10;
+int LO=11;
+
+
+//global variables
+int val = 0;
+
+
+//utility
+void fwd(int vel){
+ digitalWrite(IN1,HIGH);
+ digitalWrite(IN2,LOW);
+ digitalWrite(IN3,HIGH);
+ digitalWrite(IN4,LOW);
+ //move right else move left
+ if ( vel > 0 ){
+  analogWrite(ENA, 500 );// motor speed
+  analogWrite(ENB, 500 - vel);// motor speed  
+ }else if ( vel < 0 ){
+  analogWrite(ENA, 500 - (-1*vel) );// motor speed
+  analogWrite(ENB, 500);// motor speed   
+ }
+}
+
+void rev(int vel){
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,HIGH);
+ digitalWrite(IN3,LOW);
+ digitalWrite(IN4,HIGH);
+ if ( vel > 0 ){
+  analogWrite(ENA, 500 );// motor speed
+  analogWrite(ENB, 500 - vel);// motor speed  
+ }else if ( vel < 0 ){
+  analogWrite(ENA, 500 - (-1*vel)  );// motor speed
+  analogWrite(ENB, 500);// motor speed   
+ }
+}
+
+void hardestLeft(){
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,HIGH);
+}
+
+
+void hardestRight(){
+ digitalWrite(IN3,LOW);
+ digitalWrite(IN4,HIGH);
+}
+
+void hardLeft(){
+  fwd(-500);
+}
+void hardRight(){
+  fwd(500);
+}
+
+void turnLeft(){
+  fwd(-10);
+}
+void turnRight(){
+  fwd(10);
+}
+void steady(){
+  fwd(0);
+}
+
+void turnBack(){
+  rev(0);
+}
+
+void brk(){
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,LOW);
+ digitalWrite(IN3,LOW);
+ digitalWrite(IN4,LOW);
+}
+
+void readVal(){
+  val = 0;
+  val = digitalRead(LO) << 3  | digitalRead(LI) << 2 | digitalRead(RI) << 1 | digitalRead(RI);
+}
+
+void processVal(){
+    if(val == 8 || val == 12){
+      hardLeft();
+    }
+    if(val == 14 ){
+      turnLeft();
+    }
+
+    if(val == 1 || val == 3){
+      hardRight();
+    }
+    if(val == 7 ){
+      turnRight();
+    }
+
+    if( val == 0 || val == 2 || val == 4 || val == 5 || val == 6 || val == 9 || val == 10 || val == 11 || val == 13 || val == 15){
+      steady();
+    }
+
+    //if( val == 0){
+    //  turnBack();
+    //}
+}
+ 
+void setup()
+{
+ pinMode(IN1,OUTPUT);
+ pinMode(IN2,OUTPUT);
+ pinMode(IN3,OUTPUT);
+ pinMode(IN4,OUTPUT); 
+ pinMode(RO,INPUT);
+ pinMode(RI,INPUT);
+ pinMode(LI,INPUT);
+ pinMode(LO,INPUT);
+ steady(); 
+}
+
+void loop()
+{
+  readVal();
+  processVal();
+}
