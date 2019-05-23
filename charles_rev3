@@ -1,0 +1,160 @@
+//firmware for charles
+//team charles angels
+//charles rev. 3
+
+int ENA=5;
+int IN1=1;
+int IN2=2;
+int ENB=6;
+int IN3=3;
+int IN4=4;
+int RO=9;
+int RI=10;
+int LI=11;
+int LO=12;
+
+
+//global variables
+int val = 0;
+int FAST_SPEED = 250;
+
+
+//utility
+void fwd(int vel){
+ digitalWrite(IN1,HIGH);
+ digitalWrite(IN2,LOW);
+ digitalWrite(IN3,HIGH);
+ digitalWrite(IN4,LOW);
+ //move right else move left
+ if ( vel >= 0 ){
+  analogWrite(ENA, FAST_SPEED );// motor speed
+  analogWrite(ENB, FAST_SPEED - vel);// motor speed  
+ }else if ( vel < 0 ){
+  analogWrite(ENA, FAST_SPEED - (-1*vel) );// motor speed
+  analogWrite(ENB, FAST_SPEED);// motor speed   
+ }
+}
+
+void rev(int vel){
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,HIGH);
+ digitalWrite(IN3,LOW);
+ digitalWrite(IN4,HIGH);
+ if ( vel > 0 ){
+  analogWrite(ENA, FAST_SPEED );// motor speed
+  analogWrite(ENB, FAST_SPEED - vel);// motor speed  
+ }else if ( vel < 0 ){
+  analogWrite(ENA, FAST_SPEED - (-1*vel)  );// motor speed
+  analogWrite(ENB, FAST_SPEED);// motor speed   
+ }
+}
+
+void hardestRight(){
+ analogWrite(ENA, FAST_SPEED);
+ digitalWrite(IN1,HIGH);
+ digitalWrite(IN2,LOW);
+ analogWrite(ENB, FAST_SPEED);
+ digitalWrite(IN3,LOW);
+ digitalWrite(IN4,HIGH);
+}
+
+void hardestLeft(){
+ analogWrite(ENA,FAST_SPEED);
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,HIGH);
+ analogWrite(ENB, FAST_SPEED);
+ digitalWrite(IN3,HIGH);
+ digitalWrite(IN4,LOW);
+}
+
+void hardLeft(){
+  fwd(-FAST_SPEED);
+}
+void hardRight(){
+  fwd(FAST_SPEED);
+}
+
+void turnLeft(){
+  fwd(-FAST_SPEED);
+}
+void turnRight(){
+  fwd(FAST_SPEED);
+}
+void steady(){
+  fwd(0);
+}
+
+void turnBack(){
+  rev(0);
+}
+
+void brk(){
+ digitalWrite(IN1,LOW);
+ digitalWrite(IN2,LOW);
+ digitalWrite(IN3,LOW);
+ digitalWrite(IN4,LOW);
+}
+
+void readVal(){
+  val = 0;
+  val = digitalRead(LO) << 3  | digitalRead(LI) << 2 | digitalRead(RI) << 1 | digitalRead(RO);
+}
+
+void processVal(){
+    if(val == 11){
+      turnRight();
+    }
+    if(val == 3 ){
+      hardestRight();
+    }
+    if(val == 1 || val == 9 ||  val == 0){
+      hardestRight();
+    }
+
+    if (val == 0) {
+      hardestRight();
+    }
+    if(val == 10 || val == 14 || val == 13){
+      turnLeft();
+    }
+    if(val == 12 ){
+      hardestLeft();
+    }
+    if(val == 8 ){
+      hardestLeft();
+    }    
+    if(val == 2 || val == 4 || val == 6 || val == 15  || val == 7  || val == 5){
+      steady();
+    }
+
+    //if( val == 0){
+    //  turnBack();
+    //}
+}
+ 
+void setup()
+{
+ pinMode(IN1,OUTPUT);
+ pinMode(IN2,OUTPUT);
+ pinMode(IN3,OUTPUT);
+ pinMode(IN4,OUTPUT); 
+ pinMode(RO,INPUT);
+ pinMode(RI,INPUT);
+ pinMode(LI,INPUT);
+ 
+ pinMode(LO,INPUT);
+ steady(); 
+}
+
+void loop()
+{
+  readVal();
+//  steady();
+//  delay(1000);
+//  //delay(1000);
+  processVal();
+//  hardestLeft();
+//  delay(1000);
+//  hardestRight();
+//  delay(1000);
+}
